@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		li{
+			float:left;
+			list-style: none;
+			margin-left: 10px;
+		}
+	</style>
+</head>
+<body>
+	<input id="txt">
+	<input type="button" value="左侧进" id="leftIn">
+	<input type="button" value="右侧进" id="rightIn">
+	<input type="button" value="左侧出" id="leftOut">
+	<input type="button" value="右侧出" id="rightOut">
+	<ul></ul>
+	<script>
+		//获取所有元素
+		var oTxt=document.getElementById('txt');
+		var oLin=document.getElementById('leftIn');
+		var oRin=document.getElementById('rightIn');
+		var oLout=document.getElementById('leftOut');
+		var oRout=document.getElementById('rightOut');
+		var oUl=document.getElementsByTagName('ul')[0];
+		var oS=document.getElementById('oS');
+		oLin.onclick=function () {
+			//点击创建li并添加到ul中
+			var oL=document.createElement('li');
+			//判断是为了为空的时候不继续执行
+			if(!oTxt.value) return;
+			oL.innerHTML=oTxt.value;
+			oUl.insertBefore(oL,oUl.childNodes[0]);
+			oTxt.value='';
+		};
+		oRin.onclick=function () {
+			var oL=document.createElement('li');
+			if(!oTxt.value) return;
+			oL.innerHTML=oTxt.value;
+			oUl.appendChild(oL);
+			oTxt.value='';
+		};
+		oLout.onclick=function () {
+			if (oUl.children.length==0) return
+			var oA=oUl.childNodes[0].innerHTML;
+			oUl.removeChild(oUl.childNodes[0]);
+			//定时器是为了视觉效果上先删除在弹窗
+			setTimeout(function(){
+				alert(oA);
+			},30);
+		};
+		oRout.onclick=function () {
+			if (oUl.children.length==0) return
+			var oA=oUl.childNodes[(oUl.children.length-1)].inner;
+			oUl.removeChild(oUl.childNodes[(oUl.children.length-1)]);
+			setTimeout(function(){
+				alert(oA);
+			},30);
+		};
+		oUl.onclick=function (ev) {
+			//给未来元素加事件，用了事件委托，
+			var oEvent=ev||event;
+			var target=oEvent.target||oEvent.srcElement;
+			if(target.tagName=='LI'){
+				oUl.removeChild(target);
+			}
+		};
+	</script>
+</body>
+</html>
