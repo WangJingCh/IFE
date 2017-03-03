@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		ul{
+			height: 100px;
+			
+		}
+		li{
+			float:left;
+			list-style: none;
+			margin-left: 10px;
+			position: relative;
+		}
+	</style>
+</head>
+<body>
+	<input id="txt">
+	<input type="button" value="左侧进" id="leftIn">
+	<input type="button" value="右侧进" id="rightIn">
+	<input type="button" value="左侧出" id="leftOut">
+	<input type="button" value="右侧出" id="rightOut">
+	<input type="button" value="排序" id="to">
+	<ul></ul>
+	<ol></ol>
+	<script>
+		//获取所有元素
+		var oTxt=document.getElementById('txt');
+		var oLin=document.getElementById('leftIn');
+		var oRin=document.getElementById('rightIn');
+		var oLout=document.getElementById('leftOut');
+		var oRout=document.getElementById('rightOut');
+		var oTo=document.getElementById('to');
+		var oUl=document.getElementsByTagName('ul')[0];
+		var oOl=document.getElementsByTagName('ol')[0];
+		var oS=document.getElementById('oS');
+		var bOk=false;
+		//bOk开关用来控制一次操作排序一次，不能多次排序
+		oLin.onclick=function () {
+			//点击创建li并添加到ul中
+			var oL=document.createElement('li');
+			//判断是为了为空的时候不继续执行
+			if(oTxt.value<10||oTxt.value>100) return;
+			if(oUl.children.length>59){
+				alert('添加超过上限');
+				return
+			}
+			oL.style.background='red';
+			oL.style.width=10+'px';
+			oL.style.height=oTxt.value+'px';
+			//从下往上
+			oL.style.top=100-oTxt.value+'px';
+			oUl.insertBefore(oL,oUl.childNodes[0]);
+			oTxt.value='';
+			bOk=false;
+		};
+		oRin.onclick=function () {
+			var oL=document.createElement('li');
+			if(oTxt.value<10||oTxt.value>100) return;
+			if(oUl.children.length>59){
+				alert('添加超过上限');
+				return
+			}
+			oL.style.background='red';
+			oL.style.width=10+'px';
+			oL.style.height=oTxt.value+'px';
+			oL.style.top=100-oTxt.value+'px';
+			oUl.appendChild(oL);
+			oTxt.value='';
+			bOk=false;
+		};
+		oLout.onclick=function () {
+			if (oUl.children.length==0) return
+			var oA=oUl.childNodes[0].offsetHeight;
+			oUl.removeChild(oUl.childNodes[0]);
+			//定时器是为了视觉效果上先删除在弹窗
+			setTimeout(function(){
+				alert(oA);
+			},30);
+			bOk=false;
+		};
+		oRout.onclick=function () {
+			if (oUl.children.length==0) return
+			var oA=oUl.childNodes[(oUl.children.length-1)].clientHeight;
+			oUl.removeChild(oUl.childNodes[(oUl.children.length-1)]);
+			setTimeout(function(){
+				alert(oA);
+			},30);
+			bOk=false;
+		};
+		oUl.onclick=function (ev) {
+			//给未来元素加事件，用了事件委托，
+			var oEvent=ev||event;
+			var target=oEvent.target||oEvent.srcElement;
+			if(target.tagName=='LI'){
+				oUl.removeChild(target);
+			}
+		};
+		//排序
+		oTo.onclick=function () {
+			if(bOk) return;
+			//判断是否排序过，如果排序过就将以前排序删除，重新排序
+			if(oOl.childNodes.length==0){
+				To();
+			}else{
+				console.log(oOl.childNodes)
+				while(oOl.childNodes.length!=0){
+					oOl.removeChild(oOl.firstChild)
+				}
+				To();
+			}
+			bOk=!bOk;
+		}
+		//封装的排序函数
+		function To(){
+			var arr=[];
+			var aLi=document.getElementsByTagName('li');
+			var d=0;
+			for(var i=0; i<aLi.length; i++) {
+				arr[i]=aLi[i].clientHeight;
+			}
+			//排序算法
+			for(var i=0; i<arr.length; i++) {
+				for(var j=0; j<arr.length; j++) {
+					if(arr[i]<arr[j]){
+						d=arr[j];
+						arr[j]=arr[i];
+						arr[i]=d;
+					}
+				}
+			}
+			//绘制li
+			for(var i=0; i<arr.length; i++) {
+				var oL=document.createElement('li');
+				oL.style.background='red';
+				oL.style.width=10+'px';
+				oL.style.height=arr[i]+'px';
+				oL.style.top=100-arr[i]+'px';
+				oOl.appendChild(oL);
+			}
+		}
+	</script>
+</body>
+</html>
